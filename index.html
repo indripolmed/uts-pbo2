@@ -68,7 +68,6 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; }
         
-        /* Form Identitas (Nama, NIM, Kelas) */
         .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
@@ -78,7 +77,6 @@
             font-size: 1rem;
         }
 
-        /* KHUSUS KOTAK JAWABAN ESSAY / URAIAN */
         textarea {
             display: block !important;
             width: 100% !important;
@@ -170,6 +168,17 @@
         }
         .btn-confirm { background: #2b6cb0; color: white; }
         .btn-cancel { background: #e2e8f0; color: #2d3748; }
+
+        .score-box {
+            background-color: #ebf8ff;
+            border: 1px solid #90cdf4;
+            color: #2b6cb0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
@@ -501,6 +510,7 @@ tulis.write("Daftar alat laboratorium");
     <div class="modal-content">
         <h3 id="modalTitle">Konfirmasi Pengumpulan</h3>
         <p id="modalMessage">Apakah Anda yakin ingin mengumpulkan jawaban sekarang?</p>
+        <div id="modalScoreContainer" style="display:none;"></div>
         <div id="modalButtons">
             <button class="modal-btn btn-confirm" onclick="submitForm()">Ya, Kumpulkan</button>
             <button class="modal-btn btn-cancel" onclick="closeModal()">Batal</button>
@@ -510,6 +520,15 @@ tulis.write("Daftar alat laboratorium");
 
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwMIyGBgsaXOg-nfobFloHv0lQZsVFJeUQGCbc677vVExZ8mJe8zSV-HPFjsToenNNS/exec';
+    
+    // KUNCI JAWABAN RESMI BAGIAN A (1 - 20)
+    const kunciPG = {
+        q1: "B", q2: "C", q3: "B", q4: "B", q5: "B",
+        q6: "D", q7: "B", q8: "B", q9: "C", q10: "B",
+        q11: "B", q12: "B", q13: "C", q14: "B", q15: "B",
+        q16: "C", q17: "B", q18: "C", q19: "C", q20: "B"
+    };
+
     let timeLeft = 60 * 60; // 60 menit
     let timerSubmitted = false;
 
@@ -531,6 +550,17 @@ tulis.write("Daftar alat laboratorium");
         }
     }, 1000);
 
+    function hitungSkorPG() {
+        let skor = 0;
+        for (let i = 1; i <= 20; i++) {
+            const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+            if (selectedOption && selectedOption.value === kunciPG[`q${i}`]) {
+                skor++;
+            }
+        }
+        return skor;
+    }
+
     function confirmSubmit() {
         const nama = document.getElementById('nama').value;
         const nim = document.getElementById('nim').value;
@@ -543,6 +573,7 @@ tulis.write("Daftar alat laboratorium");
 
         document.getElementById('modalTitle').innerText = 'Konfirmasi Pengumpulan';
         document.getElementById('modalMessage').innerText = 'Apakah Anda yakin ingin menyelesaikan dan mengumpulkan jawaban ujian ini?';
+        document.getElementById('modalScoreContainer').style.display = 'none';
         document.getElementById('modalButtons').style.display = 'block';
         document.getElementById('confirmModal').style.display = 'flex';
     }
@@ -555,8 +586,12 @@ tulis.write("Daftar alat laboratorium");
         timerSubmitted = true;
         clearInterval(countdown);
 
+        // Hitung Skor Pilihan Ganda
+        const skorPG = hitungSkorPG();
+
         document.getElementById('modalTitle').innerText = 'Mengirim Jawaban...';
         document.getElementById('modalMessage').innerText = 'Mohon tunggu sebentar, jawaban Anda sedang disimpan ke sistem.';
+        document.getElementById('modalScoreContainer').style.display = 'none';
         document.getElementById('modalButtons').style.display = 'none';
         document.getElementById('confirmModal').style.display = 'flex';
 
@@ -566,8 +601,20 @@ tulis.write("Daftar alat laboratorium");
         fetch(scriptURL, { method: 'POST', body: formData })
             .then(response => {
                 document.getElementById('modalTitle').innerText = 'Ujian Selesai!';
-                document.getElementById('modalMessage').innerText = 'Terima kasih, jawaban Anda telah berhasil disimpan.';
+                document.getElementById('modalMessage').innerText = 'Terima kasih, seluruh jawaban Anda telah berhasil disimpan.';
                 
+                // Tampilkan Hasil Skor Pilihan Ganda
+                const scoreContainer = document.getElementById('modalScoreContainer');
+                scoreContainer.innerHTML = `
+                    <div class="score-box">
+                        Nilai Pilihan Ganda (Bagian A):<br>
+                        <span style="font-size: 2rem; color: #1a365d;">${skorPG} / 20</span> Poin
+                    </div>
+                    <p style="font-size:0.85rem; color:#718096;">*Bagian B, C, dan D (Uraian) akan diperiksa secara manual oleh Dosen Pengampu.</p>
+                `;
+                scoreContainer.style.display = 'block';
+
+                // Kunci seluruh form agar tidak bisa diedit lagi
                 const elements = form.elements;
                 for (let i = 0; i < elements.length; i++) {
                     elements[i].disabled = true;
@@ -576,6 +623,7 @@ tulis.write("Daftar alat laboratorium");
             .catch(error => {
                 document.getElementById('modalTitle').innerText = 'Pengiriman Gagal';
                 document.getElementById('modalMessage').innerText = 'Terjadi kesalahan koneksi. Silakan coba klik tombol Kumpulkan lagi.';
+                document.getElementById('modalScoreContainer').style.display = 'none';
                 document.getElementById('modalButtons').innerHTML = '<button class="modal-btn btn-confirm" onclick="submitForm()">Coba Lagi</button>';
                 document.getElementById('modalButtons').style.display = 'block';
             });
