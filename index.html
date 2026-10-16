@@ -11,7 +11,7 @@
             --bg-color: #f7fafc;
             --card-bg: #ffffff;
             --text-color: #2d3748;
-            --border-color: #e2e8f0;
+            --border-color: #cbd5e0;
             --accent-color: #c53030;
         }
 
@@ -62,24 +62,48 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        h1, h2, h3 { color: var(--primary-color); }
+        h1, h2, h3 { color: var(--primary-color); margin-top: 0; }
         .meta-info { font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; }
 
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; }
-        .form-group input, .form-group select, .form-group textarea {
+        
+        /* Form Identitas (Nama, NIM, Kelas) */
+        .form-group input, .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 1rem;
         }
 
+        /* KHUSUS KOTAK JAWABAN ESSAY / URAIAN */
+        textarea {
+            display: block !important;
+            width: 100% !important;
+            min-height: 140px !important;
+            padding: 12px !important;
+            font-size: 1rem !important;
+            font-family: inherit !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 6px !important;
+            box-sizing: border-box !important;
+            resize: vertical !important;
+            margin-top: 10px !important;
+            background-color: #ffffff !important;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color) !important;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
         .question-item {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #edf2f7;
         }
         .question-text { font-weight: 600; margin-bottom: 10px; }
 
@@ -87,23 +111,23 @@
             display: block;
             margin-bottom: 8px;
             cursor: pointer;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 4px;
-            transition: background-color 0.2s;
+            border: 1px solid transparent;
+            transition: all 0.2s;
         }
-        .options-label:hover { background-color: #edf2f7; }
+        .options-label:hover { background-color: #edf2f7; border-color: var(--border-color); }
 
         pre {
             background-color: #2d3748;
             color: #f7fafc;
-            padding: 12px;
+            padding: 14px;
             border-radius: 6px;
             overflow-x: auto;
             font-family: "Courier New", Courier, monospace;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
+            margin-bottom: 12px;
         }
-
-        textarea { resize: vertical; min-height: 120px; }
 
         .btn-submit {
             background-color: #2b6cb0;
@@ -157,7 +181,7 @@
 
 <div class="container">
     <div class="card">
-        <h2>UJIAN TENGAH SEMESTER teori PBO II</h2>
+        <h2>UJIAN TENGAH SEMESTER TEORI PBO II</h2>
         <div class="meta-info">
             <strong>Kode/SKS:</strong> PLMKB301 / 2 SKS Teori | <strong>Semester:</strong> III (Ganjil 2026/2027)<br>
             <strong>Dosen Pengampu:</strong> Indri Sulistianingsih, S.Kom., M.Kom.<br>
@@ -169,11 +193,11 @@
         <form id="utsForm">
             <div class="form-group">
                 <label for="nama">Nama Lengkap *</label>
-                <input type="text" id="nama" name="nama" required>
+                <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
             </div>
             <div class="form-group">
                 <label for="nim">NIM *</label>
-                <input type="text" id="nim" name="nim" required>
+                <input type="text" id="nim" name="nim" placeholder="Masukkan NIM" required>
             </div>
             <div class="form-group">
                 <label for="kelas">Kelas *</label>
@@ -442,7 +466,7 @@ tulis.write("Daftar alat laboratorium");
     <!-- BAGIAN D -->
     <div class="card">
         <h3>Bagian D. Studi Kasus (30 Poin)</h3>
-        <p style="font-size:0.95rem; background:#edf2f7; padding:10px; border-radius:6px;">
+        <p style="font-size:0.95rem; background:#edf2f7; padding:12px; border-radius:6px; border-left:4px solid #2b6cb0;">
             <strong>DESKRIPSI KEBUTUHAN:</strong><br>
             Perpustakaan Politeknik Negeri Medan ingin membangun sistem peminjaman koleksi. Perpustakaan memiliki tiga jenis koleksi, yaitu buku cetak yang memiliki jumlah halaman dan nomor rak, majalah yang memiliki edisi dan bulan terbit, serta berkas digital yang memiliki ukuran berkas dan tautan unduhan. Setiap koleksi memiliki kode, judul, dan tahun terbit. Setiap jenis memiliki aturan kelayakan pinjam yang berbeda. Buku cetak layak dipinjam apabila tidak sedang diperbaiki. Majalah edisi terbaru tidak boleh dibawa pulang. Berkas digital selalu layak dipinjam karena dapat diunduh berulang kali. Hanya buku cetak dan majalah yang memiliki lokasi rak, sedangkan berkas digital tidak. Seorang anggota dapat melakukan peminjaman, dan satu peminjaman mencatat beberapa baris detail yang masing-masing berisi satu koleksi beserta jumlahnya. Peminjaman disetujui oleh seorang pustakawan.
         </p>
@@ -544,7 +568,6 @@ tulis.write("Daftar alat laboratorium");
                 document.getElementById('modalTitle').innerText = 'Ujian Selesai!';
                 document.getElementById('modalMessage').innerText = 'Terima kasih, jawaban Anda telah berhasil disimpan.';
                 
-                // Lock all input fields
                 const elements = form.elements;
                 for (let i = 0; i < elements.length; i++) {
                     elements[i].disabled = true;
