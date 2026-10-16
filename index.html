@@ -1,16 +1,563 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2775.1">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTS Teori PBO II - D-4 TRPL</title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --accent-color: #c53030;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timer-box {
+            background-color: var(--accent-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px 40px 15px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        h1, h2, h3 { color: var(--primary-color); }
+        .meta-info { font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .question-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .question-text { font-weight: 600; margin-bottom: 10px; }
+
+        .options-label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .options-label:hover { background-color: #edf2f7; }
+
+        pre {
+            background-color: #2d3748;
+            color: #f7fafc;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.9rem;
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        .btn-submit {
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .btn-submit:hover { background-color: #2c5282; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-btn {
+            margin: 10px 5px 0 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-confirm { background: #2b6cb0; color: white; }
+        .btn-cancel { background: #e2e8f0; color: #2d3748; }
+    </style>
 </head>
 <body>
-<p class="p1">const scriptURL = https://script.google.com/macros/s/AKfycbwMIyGBgsaXOg-nfobFloHv0lQZsVFJeUQGCbc677vVExZ8mJe8zSV-HPFjsToenNNS/exec;</p>
+
+<div class="header-sticky">
+    <div><strong>UTS PBO II</strong> | 60 Menit</div>
+    <div class="timer-box" id="timer">60:00</div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2>UJIAN TENGAH SEMESTER teori PBO II</h2>
+        <div class="meta-info">
+            <strong>Kode/SKS:</strong> PLMKB301 / 2 SKS Teori | <strong>Semester:</strong> III (Ganjil 2026/2027)<br>
+            <strong>Dosen Pengampu:</strong> Indri Sulistianingsih, S.Kom., M.Kom.<br>
+            <strong>Prodi:</strong> D-4 Teknologi Rekayasa Perangkat Lunak, Polmed
+        </div>
+        <hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">
+        
+        <h3>Identitas Mahasiswa</h3>
+        <form id="utsForm">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap *</label>
+                <input type="text" id="nama" name="nama" required>
+            </div>
+            <div class="form-group">
+                <label for="nim">NIM *</label>
+                <input type="text" id="nim" name="nim" required>
+            </div>
+            <div class="form-group">
+                <label for="kelas">Kelas *</label>
+                <select id="kelas" name="kelas" required>
+                    <option value="">-- Pilih Kelas --</option>
+                    <option value="TRPL 3B">TRPL 3B</option>
+                    <option value="TRPL 3D">TRPL 3D</option>
+                    <option value="TRPL 3E">TRPL 3E</option>
+                </select>
+            </div>
+    </div>
+
+    <!-- BAGIAN A -->
+    <div class="card">
+        <h3>Bagian A. Pilihan Ganda (20 Poin)</h3>
+        
+        <div class="question-item">
+            <div class="question-text">1. Kata kunci yang dipakai untuk memanggil konstruktor kelas induk adalah</div>
+            <label class="options-label"><input type="radio" name="q1" value="A"> A. this</label>
+            <label class="options-label"><input type="radio" name="q1" value="B"> B. super</label>
+            <label class="options-label"><input type="radio" name="q1" value="C"> C. extends</label>
+            <label class="options-label"><input type="radio" name="q1" value="D"> D. implements</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">2. Pernyataan yang benar mengenai method overriding adalah</div>
+            <label class="options-label"><input type="radio" name="q2" value="A"> A. parameter boleh berbeda jumlahnya</label>
+            <label class="options-label"><input type="radio" name="q2" value="B"> B. hak akses boleh dipersempit</label>
+            <label class="options-label"><input type="radio" name="q2" value="C"> C. tanda tangan method harus sama persis</label>
+            <label class="options-label"><input type="radio" name="q2" value="D"> D. hanya berlaku pada kelas abstract</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">3. Kelas abstract berbeda dari interface karena kelas abstract</div>
+            <label class="options-label"><input type="radio" name="q3" value="A"> A. tidak boleh punya method berisi</label>
+            <label class="options-label"><input type="radio" name="q3" value="B"> B. boleh memiliki atribut dan konstruktor</label>
+            <label class="options-label"><input type="radio" name="q3" value="C"> C. boleh diwarisi lebih dari satu sekaligus</label>
+            <label class="options-label"><input type="radio" name="q3" value="D"> D. tidak boleh punya method abstract</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">4. Sebuah kelas di Java boleh</div>
+            <label class="options-label"><input type="radio" name="q4" value="A"> A. mewarisi banyak kelas induk</label>
+            <label class="options-label"><input type="radio" name="q4" value="B"> B. mengimplementasikan banyak interface</label>
+            <label class="options-label"><input type="radio" name="q4" value="C"> C. mewarisi banyak kelas dan interface</label>
+            <label class="options-label"><input type="radio" name="q4" value="D"> D. tidak boleh keduanya</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">5. Ketika variabel bertipe induk menunjuk objek turunan, versi method yang dijalankan ditentukan oleh</div>
+            <label class="options-label"><input type="radio" name="q5" value="A"> A. tipe variabelnya</label>
+            <label class="options-label"><input type="radio" name="q5" value="B"> B. tipe objeknya</label>
+            <label class="options-label"><input type="radio" name="q5" value="C"> C. urutan penulisan kelas</label>
+            <label class="options-label"><input type="radio" name="q5" value="D"> D. kata kunci final</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">6. Perubahan tipe dari kelas induk menjadi kelas turunan disebut</div>
+            <label class="options-label"><input type="radio" name="q6" value="A"> A. upcast dan selalu aman</label>
+            <label class="options-label"><input type="radio" name="q6" value="B"> B. downcast dan selalu aman</label>
+            <label class="options-label"><input type="radio" name="q6" value="C"> C. upcast dan berisiko</label>
+            <label class="options-label"><input type="radio" name="q6" value="D"> D. downcast dan berisiko</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">7. Kesalahan yang muncul ketika downcast dilakukan pada objek yang tipenya tidak sesuai adalah</div>
+            <label class="options-label"><input type="radio" name="q7" value="A"> A. NullPointerException</label>
+            <label class="options-label"><input type="radio" name="q7" value="B"> B. ClassCastException</label>
+            <label class="options-label"><input type="radio" name="q7" value="C"> C. IllegalArgumentException</label>
+            <label class="options-label"><input type="radio" name="q7" value="D"> D. ArrayIndexOutOfBoundsException</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">8. Rantai percabangan instanceof di dalam perulangan pemroses menandakan</div>
+            <label class="options-label"><input type="radio" name="q8" value="A"> A. program sudah efisien</label>
+            <label class="options-label"><input type="radio" name="q8" value="B"> B. polimorfisme belum dimanfaatkan</label>
+            <label class="options-label"><input type="radio" name="q8" value="C"> C. kelas induk terlalu banyak method</label>
+            <label class="options-label"><input type="radio" name="q8" value="D"> D. interface belum dibuat</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">9. Relasi ketika objek bagian ikut lenyap bersama wadahnya disebut</div>
+            <label class="options-label"><input type="radio" name="q9" value="A"> A. asosiasi</label>
+            <label class="options-label"><input type="radio" name="q9" value="B"> B. agregasi</label>
+            <label class="options-label"><input type="radio" name="q9" value="C"> C. komposisi</label>
+            <label class="options-label"><input type="radio" name="q9" value="D"> D. pewarisan</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">10. Pada diagram UML, agregasi digambarkan dengan</div>
+            <label class="options-label"><input type="radio" name="q10" value="A"> A. belah ketupat penuh</label>
+            <label class="options-label"><input type="radio" name="q10" value="B"> B. belah ketupat kosong</label>
+            <label class="options-label"><input type="radio" name="q10" value="C"> C. panah bermata tiga</label>
+            <label class="options-label"><input type="radio" name="q10" value="D"> D. garis putus-putus</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">11. Di dalam kode, penanda paling jelas adanya komposisi adalah</div>
+            <label class="options-label"><input type="radio" name="q11" value="A"> A. objek bagian diterima lewat konstruktor</label>
+            <label class="options-label"><input type="radio" name="q11" value="B"> B. objek bagian dibuat dengan new di dalam kelas wadah</label>
+            <label class="options-label"><input type="radio" name="q11" value="C"> C. objek bagian bertipe interface</label>
+            <label class="options-label"><input type="radio" name="q11" value="D"> D. objek bagian dideklarasikan final</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">12. Penulisan T extends Alat pada kelas generic berguna untuk</div>
+            <label class="options-label"><input type="radio" name="q12" value="A"> A. mempercepat program</label>
+            <label class="options-label"><input type="radio" name="q12" value="B"> B. membatasi tipe yang boleh masuk</label>
+            <label class="options-label"><input type="radio" name="q12" value="C"> C. menghemat memori</label>
+            <label class="options-label"><input type="radio" name="q12" value="D"> D. mengizinkan semua tipe</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">13. Struktur data yang menolak duplikat dan tidak menjamin urutan adalah</div>
+            <label class="options-label"><input type="radio" name="q13" value="A"> A. ArrayList</label>
+            <label class="options-label"><input type="radio" name="q13" value="B"> B. LinkedList</label>
+            <label class="options-label"><input type="radio" name="q13" value="C"> C. HashSet</label>
+            <label class="options-label"><input type="radio" name="q13" value="D"> D. HashMap</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">14. Untuk mencari satu data berdasarkan kunci dengan cepat, struktur yang paling tepat adalah</div>
+            <label class="options-label"><input type="radio" name="q14" value="A"> A. ArrayList</label>
+            <label class="options-label"><input type="radio" name="q14" value="B"> B. HashMap</label>
+            <label class="options-label"><input type="radio" name="q14" value="C"> C. LinkedList</label>
+            <label class="options-label"><input type="radio" name="q14" value="D"> D. Stack</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">15. Menghapus elemen di dalam perulangan for-each menimbulkan</div>
+            <label class="options-label"><input type="radio" name="q15" value="A"> A. NullPointerException</label>
+            <label class="options-label"><input type="radio" name="q15" value="B"> B. ConcurrentModificationException</label>
+            <label class="options-label"><input type="radio" name="q15" value="C"> C. IndexOutOfBoundsException</label>
+            <label class="options-label"><input type="radio" name="q15" value="D"> D. UnsupportedOperationException</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">16. Perbedaan Comparable dan Comparator adalah</div>
+            <label class="options-label"><input type="radio" name="q16" value="A"> A. Comparable ditulis di luar kelas</label>
+            <label class="options-label"><input type="radio" name="q16" value="B"> B. Comparator hanya boleh satu</label>
+            <label class="options-label"><input type="radio" name="q16" value="C"> C. Comparable menetapkan satu urutan bawaan di dalam kelas</label>
+            <label class="options-label"><input type="radio" name="q16" value="D"> D. keduanya sama saja</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">17. Eksepsi yang wajib ditangani atau dideklarasikan disebut</div>
+            <label class="options-label"><input type="radio" name="q17" value="A"> A. unchecked exception</label>
+            <label class="options-label"><input type="radio" name="q17" value="B"> B. checked exception</label>
+            <label class="options-label"><input type="radio" name="q17" value="C"> C. runtime exception</label>
+            <label class="options-label"><input type="radio" name="q17" value="D"> D. error</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">18. Blok finally akan dijalankan</div>
+            <label class="options-label"><input type="radio" name="q18" value="A"> A. hanya bila tidak terjadi eksepsi</label>
+            <label class="options-label"><input type="radio" name="q18" value="B"> B. hanya bila terjadi eksepsi</label>
+            <label class="options-label"><input type="radio" name="q18" value="C"> C. selalu, baik terjadi eksepsi maupun tidak</label>
+            <label class="options-label"><input type="radio" name="q18" value="D"> D. tidak pernah bila ada blok catch</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">19. Atribut yang sengaja dilewati saat serialisasi ditandai dengan kata kunci</div>
+            <label class="options-label"><input type="radio" name="q19" value="A"> A. static</label>
+            <label class="options-label"><input type="radio" name="q19" value="B"> B. final</label>
+            <label class="options-label"><input type="radio" name="q19" value="C"> C. transient</label>
+            <label class="options-label"><input type="radio" name="q19" value="D"> D. volatile</label>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">20. Berkas hasil serialisasi tidak dapat dibaca kembali setelah nama kelas diganti karena</div>
+            <label class="options-label"><input type="radio" name="q20" value="A"> A. ukuran berkas berubah</label>
+            <label class="options-label"><input type="radio" name="q20" value="B"> B. nama kelas tertanam di dalam berkas</label>
+            <label class="options-label"><input type="radio" name="q20" value="C"> C. Java menghapus berkas lama</label>
+            <label class="options-label"><input type="radio" name="q20" value="D"> D. penyandian berkas berubah</label>
+        </div>
+    </div>
+
+    <!-- BAGIAN B -->
+    <div class="card">
+        <h3>Bagian B. Menelaah Kode (25 Poin)</h3>
+
+        <div class="question-item">
+            <div class="question-text">21. Perhatikan kode berikut. Tentukan apa yang tercetak, lalu jelaskan alasannya dalam dua kalimat. (5 poin)</div>
+            <pre>class Alat {
+    String kode = "AL";
+    String ambilKode() { return kode; }
+}
+class Laptop extends Alat {
+    String kode = "LP";
+    @Override String ambilKode() { return kode; }
+}
+
+Alat a = new Laptop();
+System.out.println(a.kode + " " + a.ambilKode());</pre>
+            <textarea name="q21" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">22. Kode berikut gagal dikompilasi. Tunjukkan barisnya, sebutkan pesan kesalahannya, dan jelaskan cara memperbaikinya. (5 poin)</div>
+            <pre>abstract class Alat {
+    public abstract boolean siapDipinjam();
+}
+class Kabel extends Alat {
+    private int panjang;
+}
+
+Alat a = new Kabel();</pre>
+            <textarea name="q22" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">23. Kode berikut lolos kompilasi tetapi berhenti saat dijalankan. Sebutkan nama eksepsinya dan tuliskan perbaikannya. (5 poin)</div>
+            <pre>List&lt;Alat&gt; inventaris = new ArrayList&lt;&gt;();
+inventaris.add(new Proyektor("PJ-001", "Epson", 2022, 3300, 500));
+
+for (Alat a : inventaris) {
+    Laptop l = (Laptop) a;
+    System.out.println(l.getNama());
+}</pre>
+            <textarea name="q23" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">24. Method berikut memakai rantai instanceof. Tulis ulang agar tidak memakai satu pun instanceof, lalu sebutkan apa yang perlu ditambahkan pada kelas Alat. (5 poin)</div>
+            <pre>public void cetak(List&lt;Alat&gt; daftar) {
+    for (Alat a : daftar) {
+        if (a instanceof Laptop) {
+            System.out.println("Laptop: " + a.getNama());
+        } else if (a instanceof Proyektor) {
+            System.out.println("Proyektor: " + a.getNama());
+        }
+    }
+}</pre>
+            <textarea name="q24" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">25. Kode berikut membuat berkas, tetapi isinya selalu kosong. Jelaskan penyebabnya, lalu tulis ulang memakai bentuk yang benar. (5 poin)</div>
+            <pre>FileWriter tulis = new FileWriter("laporan.txt");
+tulis.write("Daftar alat laboratorium");
+// program selesai di sini</pre>
+            <textarea name="q25" placeholder="Jawaban Anda..."></textarea>
+        </div>
+    </div>
+
+    <!-- BAGIAN C -->
+    <div class="card">
+        <h3>Bagian C. Uraian Singkat (25 Poin)</h3>
+
+        <div class="question-item">
+            <div class="question-text">26. Sebuah tim ingin menambahkan kemampuan dapat dipesan terlebih dahulu pada sistem SIPALAB. Kemampuan itu hanya berlaku bagi laptop dan proyektor, tidak bagi komponen habis pakai. Jelaskan apakah kemampuan tersebut sebaiknya diletakkan pada kelas induk Alat atau pada sebuah interface, beserta alasannya. (8 poin)</div>
+            <textarea name="q26" placeholder="Jawaban Anda (3-5 kalimat)..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">27. Jelaskan perbedaan agregasi dan komposisi, lalu berikan satu contoh masing-masing dari sistem peminjaman alat laboratorium. Sebutkan pula bagaimana keduanya dibedakan ketika dilihat di dalam kode. (8 poin)</div>
+            <textarea name="q27" placeholder="Jawaban Anda (3-5 kalimat)..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">28. Seorang mahasiswa menulis blok catch yang dibiarkan kosong dengan alasan program menjadi tidak berhenti. Jelaskan mengapa cara itu berbahaya, lalu sebutkan dua cara yang lebih tepat untuk menanganinya. (9 poin)</div>
+            <textarea name="q28" placeholder="Jawaban Anda (3-5 kalimat)..."></textarea>
+        </div>
+    </div>
+
+    <!-- BAGIAN D -->
+    <div class="card">
+        <h3>Bagian D. Studi Kasus (30 Poin)</h3>
+        <p style="font-size:0.95rem; background:#edf2f7; padding:10px; border-radius:6px;">
+            <strong>DESKRIPSI KEBUTUHAN:</strong><br>
+            Perpustakaan Politeknik Negeri Medan ingin membangun sistem peminjaman koleksi. Perpustakaan memiliki tiga jenis koleksi, yaitu buku cetak yang memiliki jumlah halaman dan nomor rak, majalah yang memiliki edisi dan bulan terbit, serta berkas digital yang memiliki ukuran berkas dan tautan unduhan. Setiap koleksi memiliki kode, judul, dan tahun terbit. Setiap jenis memiliki aturan kelayakan pinjam yang berbeda. Buku cetak layak dipinjam apabila tidak sedang diperbaiki. Majalah edisi terbaru tidak boleh dibawa pulang. Berkas digital selalu layak dipinjam karena dapat diunduh berulang kali. Hanya buku cetak dan majalah yang memiliki lokasi rak, sedangkan berkas digital tidak. Seorang anggota dapat melakukan peminjaman, dan satu peminjaman mencatat beberapa baris detail yang masing-masing berisi satu koleksi beserta jumlahnya. Peminjaman disetujui oleh seorang pustakawan.
+        </p>
+
+        <div class="question-item">
+            <div class="question-text">29. Tandai seluruh calon kelas dari deskripsi di atas. Sebutkan pula satu kata benda yang sebaiknya tidak dijadikan kelas beserta alasannya. (6 poin)</div>
+            <textarea name="q29" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">30. Gambarkan/Deskripsikan class diagram yang memuat seluruh kelas, jenis relasi antar kelas, dan multiplisitas di kedua ujung setiap relasi. (10 poin)</div>
+            <textarea name="q30" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">31. Tentukan kelas mana yang menjadi kelas abstract dan kemampuan mana yang menjadi interface. Tuliskan alasan untuk kedua keputusan tersebut. (6 poin)</div>
+            <textarea name="q31" placeholder="Jawaban Anda..."></textarea>
+        </div>
+
+        <div class="question-item">
+            <div class="question-text">32. Tuliskan kerangka kode kelas induk beserta satu kelas turunan (deklarasi kelas, atribut, dan tanda tangan method). (8 poin)</div>
+            <textarea name="q32" placeholder="Jawaban Anda..."></textarea>
+        </div>
+    </div>
+
+    <button type="button" class="btn-submit" onclick="confirmSubmit()">Kumpulkan Jawaban</button>
+    </form>
+</div>
+
+<!-- Modal Confirmation -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Konfirmasi Pengumpulan</h3>
+        <p id="modalMessage">Apakah Anda yakin ingin mengumpulkan jawaban sekarang?</p>
+        <div id="modalButtons">
+            <button class="modal-btn btn-confirm" onclick="submitForm()">Ya, Kumpulkan</button>
+            <button class="modal-btn btn-cancel" onclick="closeModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwMIyGBgsaXOg-nfobFloHv0lQZsVFJeUQGCbc677vVExZ8mJe8zSV-HPFjsToenNNS/exec';
+    let timeLeft = 60 * 60; // 60 menit
+    let timerSubmitted = false;
+
+    const timerElement = document.getElementById('timer');
+
+    const countdown = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerElement.innerHTML = "00:00";
+            if (!timerSubmitted) {
+                alert("Waktu ujian telah habis! Sistem akan otomatis mengumpulkan jawaban Anda.");
+                submitForm();
+            }
+        } else {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.innerHTML = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    }, 1000);
+
+    function confirmSubmit() {
+        const nama = document.getElementById('nama').value;
+        const nim = document.getElementById('nim').value;
+        const kelas = document.getElementById('kelas').value;
+
+        if (!nama || !nim || !kelas) {
+            alert('Mohon lengkapi terlebih dahulu Identitas Mahasiswa (Nama, NIM, dan Kelas).');
+            return;
+        }
+
+        document.getElementById('modalTitle').innerText = 'Konfirmasi Pengumpulan';
+        document.getElementById('modalMessage').innerText = 'Apakah Anda yakin ingin menyelesaikan dan mengumpulkan jawaban ujian ini?';
+        document.getElementById('modalButtons').style.display = 'block';
+        document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    function submitForm() {
+        timerSubmitted = true;
+        clearInterval(countdown);
+
+        document.getElementById('modalTitle').innerText = 'Mengirim Jawaban...';
+        document.getElementById('modalMessage').innerText = 'Mohon tunggu sebentar, jawaban Anda sedang disimpan ke sistem.';
+        document.getElementById('modalButtons').style.display = 'none';
+        document.getElementById('confirmModal').style.display = 'flex';
+
+        const form = document.getElementById('utsForm');
+        const formData = new FormData(form);
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                document.getElementById('modalTitle').innerText = 'Ujian Selesai!';
+                document.getElementById('modalMessage').innerText = 'Terima kasih, jawaban Anda telah berhasil disimpan.';
+                
+                // Lock all input fields
+                const elements = form.elements;
+                for (let i = 0; i < elements.length; i++) {
+                    elements[i].disabled = true;
+                }
+            })
+            .catch(error => {
+                document.getElementById('modalTitle').innerText = 'Pengiriman Gagal';
+                document.getElementById('modalMessage').innerText = 'Terjadi kesalahan koneksi. Silakan coba klik tombol Kumpulkan lagi.';
+                document.getElementById('modalButtons').innerHTML = '<button class="modal-btn btn-confirm" onclick="submitForm()">Coba Lagi</button>';
+                document.getElementById('modalButtons').style.display = 'block';
+            });
+    }
+</script>
+
 </body>
 </html>
